@@ -1,6 +1,7 @@
 from flask_restful import Resource
+from Model import User, UserSchema
 
-class UserData(Resource):
+class UserResource(Resource):
 	def get(self, user_id):
 		if user_id is None:
 			return()

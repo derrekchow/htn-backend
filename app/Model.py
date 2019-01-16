@@ -1,10 +1,5 @@
 from flask import Flask
-from marshmallow import Schema, fields, pre_load, validate
-from flask_marshmallow import Marshmallow
-from flask_sqlalchemy import SQLAlchemy
-
-ma = Marshmallow()
-db = SQLAlchemy()
+from app import db, ma
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -38,18 +33,16 @@ class Skill(db.Model):
 
 
 
-class UserSchema(ma.Schema):
+class UserSchema(ma.ModelSchema):
 	class Meta:
 		model = User
 
-class UserSkillSchema(ma.Schema):
+class UserSkillSchema(ma.ModelSchema):
 	class Meta:
 		model = UserSkill
 
-class SkillSchema(ma.Schema):
+class SkillSchema(ma.ModelSchema):
 	class Meta:
 		model = Skill
-
-
 
 

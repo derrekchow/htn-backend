@@ -28,29 +28,32 @@ class UserResource(Resource):
 		return result
 
 	def put(self, user_id):
-		user = User.query.get(user_id)
-		data = request.get_json(force=True)
-		valid_fields = ['id', 'company', 'email', 'latitude', 'longitude', 'name', 'phone', 'pictures']
+		try:
+			user = User.query.get(user_id)
+			data = request.get_json(force=True)
+			valid_fields = ['id', 'company', 'email', 'latitude', 'longitude', 'name', 'phone', 'pictures']
 
-		for key in data:
-			if key in valid_fields:
-				setattr(user, key, data[key])
-			elif key == 'skills':
-				skills_dict = dict()
-				skills_arr = []
-				for skill in user.skills:
-					skills_dict[skill.skill.name] = skill
-					skills_arr.append(skill.skill.name)
+			for key in data:
+				if key in valid_fields:
+					setattr(user, key, data[key])
+				elif key == 'skills':
+					skills_dict = dict()
+					skills_arr = []
+					for skill in user.skills:
+						skills_dict[skill.skill.name] = skill
+						skills_arr.append(skill.skill.name)
 
-				for skill in data[key]:
-					if skill['name'] in skills_arr:
-						skills_dict[skill['name']].rating = skill['rating']
-					else:
-						new_user_skill = UserSkill(rating=skill['rating'], user_id=user_id, skill_id=Skill.query.filter(Skill.name == skill['name']).first().id)
-						db.session.add(new_user_skill)
-						db.session.flush()
+					for skill in data[key]:
+						if skill['name'] in skills_arr:
+							skills_dict[skill['name']].rating = skill['rating']
+						else:
+							new_user_skill = UserSkill(rating=skill['rating'], user_id=user_id, skill_id=Skill.query.filter(Skill.name == skill['name']).first().id)
+							db.session.add(new_user_skill)
+							db.session.flush()
 
-		db.session.commit()
+			db.session.commit()
+		except:
+			return "invalid type"
 		
 		# for skill in _:
 		# 	skills = Skill.query.filter(Skill.name==).first()

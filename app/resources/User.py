@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from app import db
-from app.Model import User, UserSchema, UserSkill, UserSkillSchema, SkillSchema
+from app.Model import User, UserSchema, UserSkill, UserSkillSchema, SkillSchema, Skill
 from marshmallow import pprint
 from flask import request
 import json
@@ -38,15 +38,17 @@ class UserResource(Resource):
 			elif key == 'skills':
 				skills_dict = dict()
 				skills_arr = []
-				for skill in data[key]:
-					skills_dict[skill['name']] = skill['rating']
-					skills_arr.append(skill['name'])
-
 				for skill in user.skills:
-					if skill.skill.name in skills_arr:
-						skill.rating = skills_dict[skill.skill.name]
+					skills_dict[skill.skill.name] = skill
+					skills_arr.append(skill.skill.name)
+
+				for skill in data[key]:
+					if skill['name'] in skills_arr:
+						skills_dict[skill['name']].rating = skill['rating']
 					else:
-						print(skill)
+						new_user_skill = UserSkill(rating=skill['rating'], user_id=user_id, skill_id=Skill.query.filter(Skill.name == skill['name']).first().id)
+						db.session.add(new_user_skill)
+						db.session.flush()
 
 		db.session.commit()
 		

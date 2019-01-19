@@ -1,7 +1,7 @@
 from app import app, api
 from flask_restful import Api
 
-from app.resources.User import UsersResource
+from app.resources.User import UserResource
 from app.resources.UserSkill import UserSkillResource
 
 api = Api(app)
